@@ -1,9 +1,9 @@
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
-from dotenv import load_dotenv
-from .database import SessionLocal, engine
+from .database import SessionLocal
 
 app = FastAPI()
+
 
 # Dependency
 def get_db():
@@ -11,7 +11,10 @@ def get_db():
     try:
         yield db
         print(db)
-    except:
+    except Exception:
+        raise HTTPException(
+                status_code=500, detail="Failed to get DB Connection"
+                )
         print("An exception occured")
     finally:
         db.close()
