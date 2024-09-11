@@ -10,6 +10,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
 
+    messages = relationship("Message", back_populates="owner")
+
 
 class Message(Base):
     __tablename__ = "messages"
@@ -19,3 +21,5 @@ class Message(Base):
     response = Column(String)
     createdAt = Column(DateTime)
     updatedAt = Column(DateTime)
+
+    owner = relationship("User", back_populates="messages")
