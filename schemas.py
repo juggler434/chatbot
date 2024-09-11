@@ -4,7 +4,6 @@ import uuid
 
 
 class User(BaseModel):
-    id: str
     email: EmailStr
 
 
@@ -13,6 +12,7 @@ class UserCreate(User):
 
 
 class UserDatabase(User):
+    id: str
     hashed_password: str
 
 
