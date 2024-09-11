@@ -1,14 +1,19 @@
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
 import uuid
 from datetime import datetime, timedelta, timezone
 import jwt
+from jwt.exceptions import InvalidTokenError
 import os
 from dotenv import load_dotenv
+from typing import Annotated
 
 
 load_dotenv()
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 class User(BaseModel):
@@ -48,7 +53,7 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    email: str | None = None
+    user_id: str | None = None
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -78,3 +83,16 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    try:
+        payload = jwt.decode(token,
+                             os.getenv("AUTH_SECRET_KEY"),
+                             algorthims=[os.getenv("AUTH_ALGORITHM")]
+                             )
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise Exception("Could not validate credentials")
+        token_data = TokenData(user_id=user_id)
+    except InvalidTokenError:
+        raise Exception("Could not validate credentials")
+    return token_data

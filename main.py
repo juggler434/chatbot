@@ -48,7 +48,7 @@ async def login_for_access_token(
         raise credentials_exception
 
     access_token = schemas.create_access_token(
-            data={"sub": user.email}
+            data={"sub": user.uuid}
             )
     token = schemas.Token(access_token=access_token, token_type="bearer")
     return token
