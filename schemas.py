@@ -56,6 +56,7 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode,
                              os.getenv("AUTH_SECRET_KEY"),
                              algorithm=os.getenv("AUTH_ALGORITHM"))
+    print("does this print anything?")
     return encoded_jwt
 
 
