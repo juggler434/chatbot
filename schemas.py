@@ -30,9 +30,16 @@ class Message(BaseModel):
 
 
 class MessageCreate(Message):
-    id: str
     response: str
+
+
+class MessageDatabase(MessageCreate):
+    id: str
     created_at: datetime
+    updated_at: datetime | None = None
+
+    class Config:
+        orm_mode = True
 
 
 class Token(BaseModel):
