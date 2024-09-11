@@ -24,6 +24,17 @@ class UserDatabase(User):
     hashed_password: str
 
 
+class Message(BaseModel):
+    question: str
+    user_id: str
+
+
+class MessageCreate(Message):
+    id: str
+    response: str
+    created_at: datetime
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
