@@ -19,7 +19,7 @@ class Message(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     question = Column(String)
     response = Column(String)
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
 
     owner = relationship("User", back_populates="messages")
