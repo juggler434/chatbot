@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from . import models, schemas
+from datetime import datetime
 
 
 def get_user_by_email(db: Session, email: str):
@@ -22,3 +23,17 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
+def create_message(db: Session, message: schemas.MessageCreate):
+    uuid = schemas.generateUUID()
+    created_at = datetime.now()
+    db_message = models.Message(
+            id=uuid,
+            user_id=message.user_id,
+            question=message.question,
+            response=message.response,
+            created_at=created_at
+            )
+    db.add(db_message)
+    db.commit()
+    db.refresh(db_message)
+    return db_message
