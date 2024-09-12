@@ -32,6 +32,20 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
+@app.get("/messages")
+def read_messages(token_data: Annotated[schemas.TokenData,
+                                        Depends(schemas.get_current_user)],
+                  offset: int = 0,
+                  limit: int = 50,
+                  db: Session = Depends(get_db)):
+    user_id = token_data.user_id
+    messages = crud.get_user_messages(db,
+                                      offset=offset,
+                                      limit=limit,
+                                      user_id=user_id)
+    return messages
+
+
 @app.post("/messages/", response_model=schemas.MessageCreate)
 def create_message(message: schemas.Message,
                    token_data: Annotated[
@@ -40,14 +54,11 @@ def create_message(message: schemas.Message,
                    db: Session = Depends(get_db)):
     response = schemas.get_message_response()
 
-    try:
-        message_to_create = schemas.MessageCreate(
-                user_id=token_data.user_id,
-                question=message.question,
-                response=response
-                )
-    except Exception as exc:
-        print(exc)
+    message_to_create = schemas.MessageCreate(
+            user_id=token_data.user_id,
+            question=message.question,
+            response=response
+            )
 
     return crud.create_message(db, message_to_create)
 
