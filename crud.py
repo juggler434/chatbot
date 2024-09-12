@@ -26,17 +26,14 @@ def create_user(db: Session, user: schemas.UserCreate):
 def create_message(db: Session, message: schemas.MessageCreate):
     uuid = schemas.generateUUID()
     created_at = datetime.now()
-    try:
-        db_message = models.Message(
-                id=uuid,
-                user_id=message.user_id,
-                question=message.question,
-                response=message.response,
-                created_at=created_at
-                )
-        db.add(db_message)
-        db.commit()
-        db.refresh(db_message)
-    except Exception as exc:
-        print(exc)
+    db_message = models.Message(
+            id=uuid,
+            user_id=message.user_id,
+            question=message.question,
+            response=message.response,
+            created_at=created_at
+            )
+    db.add(db_message)
+    db.commit()
+    db.refresh(db_message)
     return db_message
