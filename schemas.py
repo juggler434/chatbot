@@ -16,19 +16,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-class User(BaseModel):
-    email: EmailStr
-
-
-class UserCreate(User):
-    password: str
-
-
-class UserDatabase(User):
-    id: str
-    hashed_password: str
-
-
 class Message(BaseModel):
     question: str
 
@@ -44,7 +31,24 @@ class MessageDatabase(MessageCreate):
     updated_at: datetime | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+class User(BaseModel):
+    email: EmailStr
+    messages: list[Message] = []
+
+
+class UserCreate(User):
+    password: str
+
+
+class UserDatabase(User):
+    id: str
+    hashed_password: str
+
+    class Config:
+        from_attributs = True
 
 
 class Token(BaseModel):
