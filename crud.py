@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 from datetime import datetime
-import uuid
 
 
 def get_user_by_email(db: Session, email: str):
@@ -41,7 +40,10 @@ def create_message(db: Session, message: schemas.MessageCreate):
 
 
 def get_user_messages(db: Session, user_id: str, offset: int, limit: int):
-    return db.query(models.Message).filter(models.Message.user_id == user_id).order_by(models.Message.created_at.desc()).offset(offset).limit(limit).all()
+    return db.query(models.Message) \
+        .filter(models.Message.user_id == user_id) \
+        .order_by(models.Message.created_at.desc()) \
+        .offset(offset).limit(limit).all()
 
 
 def update_message(db: Session,
@@ -53,6 +55,18 @@ def update_message(db: Session,
             models.Message.user_id == user_id).first()
     message.question = updated_question
     message.updated_at = datetime.now()
+    db.add(message)
+    db.commit()
+    db.refresh(message)
+    return message
+
+
+def delete_message(db: Session, message_id: str, user_id: str):
+    message = db.query(models.Message).filter(
+            models.Message.id == message_id,
+            models.Message.user_id == user_id).first()
+
+    message.deleted_at = datetime.now()
     db.add(message)
     db.commit()
     db.refresh(message)

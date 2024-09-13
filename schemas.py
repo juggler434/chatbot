@@ -29,6 +29,7 @@ class MessageDatabase(MessageCreate):
     id: str
     created_at: datetime
     updated_at: datetime | None = None
+    delete_at: datetime | None = None
 
     class Config:
         from_attributes = True
