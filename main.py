@@ -13,7 +13,8 @@ origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
     "http://localhost",
-    "http://localhost:3000",
+    "http://localhost:8080",
+    "http://localhost:3000"
 ]
 
 app.add_middleware(
@@ -62,7 +63,7 @@ def read_messages(token_data: Annotated[schemas.TokenData,
     return messages
 
 
-@app.post("/messages/", response_model=schemas.MessageCreate)
+@app.post("/messages", response_model=schemas.MessageCreate)
 def create_message(message: schemas.Message,
                    token_data: Annotated[
                        schemas.TokenData,
@@ -113,11 +114,8 @@ async def login_for_access_token(
     user = crud.get_user_by_email(db, form_data.username)
     if not user:
         raise credentials_exception
-    try:
-        if not schemas.verify_password(form_data.password, user.hashed_password):
-            raise credentials_exception
-    except Exception as exp:
-        print(exp)
+    if not schemas.verify_password(form_data.password, user.hashed_password):
+        raise credentials_exception
 
     access_token = schemas.create_access_token(
             data={"sub": str(user.id)}
