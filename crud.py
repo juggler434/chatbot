@@ -10,16 +10,19 @@ def get_user_by_email(db: Session, email: str):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    uuid = schemas.generateUUID()
-    hashed_password = schemas.get_password_hash(user.password)
-    db_user = models.User(
-            id=uuid,
-            email=user.email,
-            hashed_password=hashed_password
-            )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    try:
+        uuid = schemas.generateUUID()
+        hashed_password = schemas.get_password_hash(user.password)
+        db_user = models.User(
+                id=uuid,
+                email=user.email,
+                hashed_password=hashed_password
+                )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+    except Exception as exp:
+        print(exp)
     return db_user
 
 

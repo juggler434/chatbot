@@ -5,8 +5,25 @@ from .database import SessionLocal
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 import uuid
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Dependency
@@ -46,7 +63,7 @@ def read_messages(token_data: Annotated[schemas.TokenData,
     return messages
 
 
-@app.post("/messages/", response_model=schemas.MessageCreate)
+@app.post("/messages", response_model=schemas.MessageCreate)
 def create_message(message: schemas.Message,
                    token_data: Annotated[
                        schemas.TokenData,

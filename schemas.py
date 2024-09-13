@@ -37,7 +37,6 @@ class MessageDatabase(MessageCreate):
 
 class User(BaseModel):
     email: EmailStr
-    messages: list[Message] = []
 
 
 class UserCreate(User):
@@ -47,6 +46,7 @@ class UserCreate(User):
 class UserDatabase(User):
     id: str
     hashed_password: str
+    messages: list[Message] = []
 
     class Config:
         from_attributs = True
@@ -65,7 +65,7 @@ def get_password_hash(password):
     pwd_bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password=pwd_bytes, salt=salt)
-    return hashed_password
+    return hashed_password.decode('utf-8')
 
 
 def generateUUID():
