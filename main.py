@@ -5,8 +5,24 @@ from .database import SessionLocal
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 import uuid
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Dependency
@@ -97,8 +113,11 @@ async def login_for_access_token(
     user = crud.get_user_by_email(db, form_data.username)
     if not user:
         raise credentials_exception
-    if not schemas.verify_password(form_data.password, user.hashed_password):
-        raise credentials_exception
+    try:
+        if not schemas.verify_password(form_data.password, user.hashed_password):
+            raise credentials_exception
+    except Exception as exp:
+        print(exp)
 
     access_token = schemas.create_access_token(
             data={"sub": str(user.id)}
