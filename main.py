@@ -75,6 +75,16 @@ def update_message(message_id: str,
                                user_id=token_data.user_id)
 
 
+@app.delete("/messages/{message_id}")
+def delete_message(message_id: str,
+                   token_data: Annotated[schemas.TokenData,
+                                         Depends(schemas.get_current_user)],
+                   db: Session = Depends(get_db)):
+    return crud.delete_message(db,
+                               message_id=message_id,
+                               user_id=token_data.user_id)
+
+
 @app.post("/login")
 async def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
