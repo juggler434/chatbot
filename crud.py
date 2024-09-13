@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 from datetime import datetime
-import uuid
 
 
 def get_user_by_email(db: Session, email: str):

@@ -16,10 +16,11 @@ class User(Base):
 class Message(Base):
     __tablename__ = "messages"
     id = Column(String, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(String, ForeignKey("users.id"))
     question = Column(String)
     response = Column(String)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+    deleted_at = Column(DateTime)
 
     user = relationship("User", back_populates="messages")
